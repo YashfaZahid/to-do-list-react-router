@@ -15,7 +15,7 @@ function Signup(){
             const userCredentials=await createUserWithEmailAndPassword(auth,email,password)
             console.log(userCredentials)
             alert("user created")
-            navigate("/login")
+            navigate("/")
             }
             
         catch(err:any){
@@ -46,7 +46,7 @@ function Signup(){
             onChange={(e)=>setpassword(e.target.value)}/>
             <button onClick={handleSignup} className="login-btn">Signup</button>
             <p>Already have an account?</p>
-            <Link to="/login">Login</Link>
+            <Link to="/">Login</Link>
         </div>
     )
 }

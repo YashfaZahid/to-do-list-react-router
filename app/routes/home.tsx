@@ -12,7 +12,7 @@ function Home() {
     async function loadTodos() {
       const user:any = auth.currentUser;
       if (!user) {
-        navigate("/login");
+        navigate("/");
 }
       const data = await getTodos(user.uid);
       setTodos(data);
