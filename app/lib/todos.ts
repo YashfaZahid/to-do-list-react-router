@@ -1,4 +1,4 @@
-const BASE_URL = "to-do-list-react-router.vercel.app/todos";
+const BASE_URL = "http://localhost:3001/todos";
 
 export async function getTodos(userId: string) {
   const res = await fetch(`${BASE_URL}?userId=${userId}`);
