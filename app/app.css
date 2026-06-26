@@ -5,9 +5,11 @@ body{
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  overflow: hidden;
+  /* overflow: hidden; */
+  overflow-x: hidden;
   font-family: monospace;
   background-color: rgb(48, 44, 43);
+  margin: 0;
 }
 .app-container{
 background-color: white;
@@ -16,11 +18,17 @@ display: flex;
 align-items: center;
 box-sizing: border-box;
 flex-direction: column;
-width: 70vw;
+width: 80vw;
 min-height: 80vh;
-border-radius: 5%;
+border-radius: 50px;
 gap: 10px;
 
+
+}
+
+.inline-error-message{
+  color: red;
+  font-size: 15px;
 }
 .row-container{
   display: flex;
@@ -28,6 +36,7 @@ gap: 10px;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+  width: 100%;
   
 }
 .task-input{
@@ -37,20 +46,20 @@ gap: 10px;
   outline: none;
   border: 0;
   border: 1.5px solid rgb(32, 8, 57);
-  width:20vw;
+  width:40%;
 }
 
 .task-container{
   background-color: rgb(239, 239, 231);
   border-radius: 10rem;
-  width: 70%;
+  width: 60%;
   min-height: 40%;
   justify-content: left;
 }
 .add-btn{
   margin-left: 2px;
-  min-width: 30%;
-  height: 5vh;
+  min-width: 60px;
+  min-height: 30px;
   border-radius: 15px;
   box-sizing: border-box;
   border:1.5px solid rgb(32, 8, 57); ;
@@ -67,7 +76,7 @@ width: 10%;
 }
 .delete-btn{
   min-width: 10%;
-  height: 4.5vh;
+  min-height: 10%;
   border-radius: 15px;
   box-sizing: border-box;
   border:1.5px solid rgb(32, 8, 57); ;
@@ -92,15 +101,15 @@ justify-content: center;
 align-items: center;
 box-sizing: border-box;
 flex-direction: column;
-width: 50vw;
+width: 70vw;
 min-height: 80vh;
-border-radius: 5%;
+border-radius: 30px;
 gap: 10px;
 }
 .login-btn{
   min-width: 15%;
-  height: 5vh;
-  border-radius: 10rem;
+  height: 4vh;
+  border-radius: 20px;
   box-sizing: border-box;
   border:1.5px solid rgb(32, 8, 57); ;
 }
@@ -119,24 +128,42 @@ gap: 10px;
   border: 1.5px solid rgb(32, 8, 57);
   width:50%;
 }
+.logout-btn{
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 
-@media screen and (min-width: 768px) {
-  .app-container{
-    width: 70vw;
+@media screen and (max-width: 768px) {
+  .login-container{
+    /* width: 80vw; */
+    min-width: 350px;
+    
+    background-color: aqua;
+    
   }
   input{
     width: 100%;
   }
+  .app-container{
+    width: 80vw;
+  }
 }
 @media screen and (min-width: 921px) {
-  .app-container{
-    width: 50vw;
-    max-width: 1000px;
+  .login-container{
+    font-size: 150%;
+    width: 80vw;
+    max-width: 800px;
+    background-color: rgb(255, 255, 255);
   }
   input{
     max-width: 700px;
   }
   .task-container{
-    max-width: 400px;
+    /* max-width: 400px; */
+  }
+  .app-container{
+    max-width: 700px;
+    margin-top: 20px;
+    /* margin-bottom: 20px; */
   }
 }

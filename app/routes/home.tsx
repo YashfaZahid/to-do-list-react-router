@@ -2,24 +2,53 @@ import { useEffect, useState } from "react";
 import { getTodos, addTodo, deleteTodo, updateTodo } from "../lib/todos";
 import { auth } from "../lib/firebase";
 import { useNavigate } from "react-router";
+import { redirect,useLoaderData } from "react-router";
+import { onAuthStateChanged } from "firebase/auth";
+
+
+function getFirebaseUser(): Promise<any>{
+    return new Promise((resolve)=>{
+        const unsubscribe=onAuthStateChanged(auth,(user)=>{
+            unsubscribe();
+            resolve(user);
+        })
+    })
+}
+
+export const clientLoader=async()=> {
+    if(!localStorage.getItem("user_session_id")){
+        throw redirect("/")
+    }
+    const user = await getFirebaseUser();
+    if (!user) {
+    localStorage.removeItem("user_session_id"); 
+    throw redirect("/"); 
+  }
+   
+const res = await getTodos(user.uid);
+  return res; 
+    
+}
+
+clientLoader.hydrate = true;
+// export const loader=async()=>{
+//   const user=auth.currentUser
+//   const data=getTodos(user.uid)
+// }
 
 function Home() {
   const navigate = useNavigate();
-  const [todos, setTodos] = useState<any[]>([]);
+  const initialTodos=useLoaderData<typeof clientLoader>() 
+  const [todos, setTodos] = useState<any[]>(initialTodos || []);
   const [input, setInput] = useState("");
 
-  useEffect(() => {
-    async function loadTodos() {
-      const user:any = auth.currentUser;
-      if (!user) {
-        navigate("/");
+
+
+
+function handleLogout(){
+  localStorage.removeItem("user_session_id")
+  navigate("/")
 }
-      const data = await getTodos(user.uid);
-      setTodos(data);
-      console.log(data)
-    }
-    loadTodos();
-  }, []);
 
   async function handleAddTodo() {
     if (!input.trim()) return;
@@ -61,6 +90,7 @@ function Home() {
           <button onClick={() => handleDelete(todo.id) } className="delete-btn">Delete</button>
         </div>
       ))}
+      <button className="login-btn logout-btn" onClick={handleLogout}>LogOut</button>
     </div>
   );
 }

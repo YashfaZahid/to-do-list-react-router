@@ -4,9 +4,19 @@ import { useEffect, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router";
 
+export const clientLoader=async()=> {
+    if(localStorage.getItem("user_session_id")){
+        throw redirect("/home")
+    }
+    else{
+        return null;
+    }
+}
+
 function Login() {
   const [email, setemail] = useState<string>("");
   const [password, setpassword] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   async function handleLogin() {
@@ -17,19 +27,24 @@ function Login() {
         password,
       );
       console.log(userCredential);
+      localStorage.setItem("user_session_id","test-token-12345")
       console.log("navigate");
       navigate("/home");
       console.log("navigate called");
     } catch (err: any) {
       console.log(err);
       if (err.code === "auth/invalid-credential") {
-        alert("invalid credentials");
+        setErrorMessage("Invalid email or password. Please try again.");
       }
+      else {
+    setErrorMessage("An unexpected error occurred.");
+  }
     }
   }
 
   return (
     <div className="login-container">
+      
       <h1>To-Do App</h1>
       <h2>Welcome to Login!</h2>
       <input
@@ -44,6 +59,11 @@ function Login() {
         className="login-input"
         onChange={(e) => setpassword(e.target.value)}
       />
+      {errorMessage && (
+  <p className="inline-error-message">
+    {errorMessage}
+  </p>
+)}
       <button onClick={handleLogin} className="login-btn">
         Login
       </button>
