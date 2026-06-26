@@ -138,7 +138,7 @@ gap: 10px;
     /* width: 80vw; */
     min-width: 350px;
     
-    background-color: aqua;
+    
     
   }
   input{
@@ -153,7 +153,7 @@ gap: 10px;
     font-size: 150%;
     width: 80vw;
     max-width: 800px;
-    background-color: rgb(255, 255, 255);
+    
   }
   input{
     max-width: 700px;
