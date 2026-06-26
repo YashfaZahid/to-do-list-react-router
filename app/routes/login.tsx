@@ -3,9 +3,21 @@ import { auth } from "../lib/firebase";
 import { useEffect, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router";
+import { onAuthStateChanged } from "firebase/auth";
+
+
+function getFirebaseUser(): Promise<any>{
+    return new Promise((resolve)=>{
+        const unsubscribe=onAuthStateChanged(auth,(user)=>{
+            unsubscribe();
+            resolve(user);
+        })
+    })
+}
 
 export const clientLoader=async()=> {
-    if(localStorage.getItem("user_session_id")){
+  const user = await getFirebaseUser();
+    if(user){
         throw redirect("/home")
     }
     else{
@@ -27,7 +39,7 @@ function Login() {
         password,
       );
       console.log(userCredential);
-      localStorage.setItem("user_session_id","test-token-12345")
+      // localStorage.setItem("user_session_id","test-token-12345") 
       console.log("navigate");
       navigate("/home");
       console.log("navigate called");

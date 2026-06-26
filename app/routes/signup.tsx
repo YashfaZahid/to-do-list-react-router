@@ -4,10 +4,19 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { useNavigate } from "react-router";
 import { redirect } from "react-router";
+import { onAuthStateChanged } from "firebase/auth";
 
-
+function getFirebaseUser(): Promise<any>{
+    return new Promise((resolve)=>{
+        const unsubscribe=onAuthStateChanged(auth,(user)=>{
+            unsubscribe();
+            resolve(user);
+        })
+    })
+}
 export const clientLoader=async()=> {
-    if(localStorage.getItem("user_session_id")){
+    const user = await getFirebaseUser();
+    if(user){
         throw redirect("/home")
     }
     else{

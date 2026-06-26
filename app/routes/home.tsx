@@ -4,6 +4,7 @@ import { auth } from "../lib/firebase";
 import { useNavigate } from "react-router";
 import { redirect,useLoaderData } from "react-router";
 import { onAuthStateChanged } from "firebase/auth";
+import { signOut } from "firebase/auth";
 
 
 function getFirebaseUser(): Promise<any>{
@@ -16,12 +17,9 @@ function getFirebaseUser(): Promise<any>{
 }
 
 export const clientLoader=async()=> {
-    if(!localStorage.getItem("user_session_id")){
-        throw redirect("/")
-    }
     const user = await getFirebaseUser();
     if (!user) {
-    localStorage.removeItem("user_session_id"); 
+    // localStorage.removeItem("user_session_id"); 
     throw redirect("/"); 
   }
    
@@ -37,22 +35,27 @@ clientLoader.hydrate = true;
 // }
 
 function Home() {
+  interface Todo {
+    id: number;
+    title: string;
+    completed: boolean;
+    userId: string;
+}
   const navigate = useNavigate();
+  
   const initialTodos=useLoaderData<typeof clientLoader>() 
-  const [todos, setTodos] = useState<any[]>(initialTodos || []);
+  const [todos, setTodos] = useState<Todo[]>(initialTodos || []);
   const [input, setInput] = useState("");
 
 
-
-
-function handleLogout(){
-  localStorage.removeItem("user_session_id")
+async function handleLogout(){
+  await signOut(auth)
   navigate("/")
 }
 
   async function handleAddTodo() {
     if (!input.trim()) return;
-    const user = auth.currentUser;
+    const user=auth.currentUser
     if (!user) return;
     const newTodo = await addTodo(input, user.uid);
     setTodos([...todos, newTodo]);
