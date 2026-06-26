@@ -13,7 +13,7 @@ function getFirebaseUser(): Promise<any>{
             resolve(user);
         })
     })
-}
+} 
 
 export const clientLoader=async()=> {
   const user = await getFirebaseUser();

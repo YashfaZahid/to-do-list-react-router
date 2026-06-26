@@ -5,8 +5,6 @@ import Home from "./routes/home";
 import Signup from "./routes/signup";
 
 
-
-
 export default [
     index("routes/login.tsx"),
     route("Signup","routes/signup.tsx"),
