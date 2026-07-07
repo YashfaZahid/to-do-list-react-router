@@ -7,8 +7,10 @@ body{
   box-sizing: border-box;
   /* overflow: hidden; */
   overflow-x: hidden;
-  font-family: monospace;
-  background-color: rgb(48, 44, 43);
+  font-family: "Press Start 2P", monospace;
+  /* background-color: rgb(48, 44, 43); */
+  background-image: url('\assets\rainbow-vortex.svg');
+  background-size: cover;
   margin: 0;
 }
 .app-container{
@@ -19,11 +21,33 @@ align-items: center;
 box-sizing: border-box;
 flex-direction: column;
 width: 80vw;
-min-height: 80vh;
+ border: 4px solid black;
+box-shadow: 6px 6px 0 black;
+height: 90vh;
 border-radius: 50px;
 gap: 10px;
+margin: 0;
+}
+.tasks-full-container{
+  background-color: white;
+display: flex;
+overflow-y: scroll;
+/* justify-content: center; */
+align-items: center;
+box-sizing: border-box;
+flex-direction: column;
+width: 100%;
+height: 100%;
+border-radius: 50px;
+gap: 10px;
+}
 
-
+input[type="checkbox"]:checked {
+  accent-color: rgb(136, 28, 109);
+}
+h1{
+  font-size: 3em;
+  margin-bottom: 0;
 }
 
 .inline-error-message{
@@ -50,11 +74,15 @@ gap: 10px;
 }
 
 .task-container{
-  background-color: rgb(239, 239, 231);
+  background-color: rgb(239, 235, 231);
   border-radius: 10rem;
   width: 60%;
-  min-height: 40%;
+  /* min-height: 20%; */
+  max-height: 40px;
   justify-content: left;
+}
+.tasks-full-container::-webkit-scrollbar {
+  display: none;
 }
 .add-btn{
   margin-left: 2px;
@@ -74,38 +102,39 @@ margin: 0;
 padding: 0;
 width: 10%;
 }
-.delete-btn{
-  min-width: 10%;
-  min-height: 10%;
-  border-radius: 15px;
-  box-sizing: border-box;
-  border:1.5px solid rgb(32, 8, 57); ;
-}
-.delete-btn:hover{
-  background-color: rgb(37, 41, 49);
-  color: white;
-  cursor: pointer;
-}
 #task-content{
   padding: 10px;
-  width: 65%;
+  width: 75%;
   overflow-wrap: break-word;
   word-break: break-word;
 }
 
 
 .login-container{
-  background-color: white;
+background-color: white;
 display: flex;
 justify-content: center;
 align-items: center;
 box-sizing: border-box;
 flex-direction: column;
-width: 70vw;
-min-height: 80vh;
-border-radius: 30px;
-gap: 10px;
+width: 80vw;
+ border: 4px solid black;
+box-shadow: 6px 6px 0 black;
+height: 90vh;
+border-radius: 50px;
+/* gap: 10px; */
+
 }
+.login-container p{
+  margin: 5px;
+  font-size: 15px;
+  text-align: center;
+}
+.login-container a{
+  margin: 1;
+  font-size: 15px;
+}
+
 .login-btn{
   min-width: 15%;
   height: 4vh;
@@ -131,12 +160,24 @@ gap: 10px;
 .logout-btn{
   margin-top: 20px;
   margin-bottom: 20px;
+  
+}
+.delete-icon {
+  color: rgb(64, 59, 59);
+  cursor: pointer;
+  font-size: 100%;
+  
+}
+
+.delete-icon:hover {
+  color: darkred;
 }
 
 @media screen and (max-width: 768px) {
   .login-container{
     /* width: 80vw; */
-    min-width: 350px;
+    min-width: 250px;
+   
     
     
     
@@ -144,15 +185,16 @@ gap: 10px;
   input{
     width: 100%;
   }
-  .app-container{
-    width: 80vw;
+  .task-container{
+    max-height: 40px;
   }
+
 }
 @media screen and (min-width: 921px) {
   .login-container{
     font-size: 150%;
     width: 80vw;
-    max-width: 800px;
+    max-width: 700px;
     
   }
   input{
@@ -160,6 +202,7 @@ gap: 10px;
   }
   .task-container{
     /* max-width: 400px; */
+    max-height: 40px;
   }
   .app-container{
     max-width: 700px;

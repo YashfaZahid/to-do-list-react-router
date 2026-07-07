@@ -1,60 +1,44 @@
-import { useState } from "react";
-import { Link } from "react-router";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../lib/firebase";
-import { useNavigate } from "react-router";
-import { redirect } from "react-router";
-import { onAuthStateChanged } from "firebase/auth";
-
-function getFirebaseUser(): Promise<any>{
-    return new Promise((resolve)=>{
-        const unsubscribe=onAuthStateChanged(auth,(user)=>{
-            unsubscribe();
-            resolve(user);
-        })
-    })
-}
-export const clientLoader=async()=> {
-    const user = await getFirebaseUser();
-    if(user){
-        throw redirect("/home")
-    }
-    else{
-        return null;
-    }
-}
 
 function Signup() {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
-  // const [username,setusername]=useState("")
-  const [errormessage,seterrormessage]=useState<string | null>(null);
+  const [errormessage, seterrormessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [authChecking, setAuthChecking] = useState(true);
   const navigate = useNavigate();
 
-  async function handleSignup() {
-    try {
-      const userCredentials = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      console.log(userCredentials);
-      seterrormessage("user created!")
-      navigate("/");
-    } catch (err: any) {
-      if (err.code === "auth/email-already-in-use") {
-        seterrormessage("Account already in use!");
-      } else if (err.code === "auth/invalid-credential") {
-        seterrormessage("invalid credentials!")
-      } else if (
-        err.code === "auth/weak-password" ||
-        err.code === "auth/missing-password"
-      ) {
-        seterrormessage("password must contain atleast 6 charaters!");
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate("/home", { replace: true });
       } else {
-        seterrormessage(err.message);
+        setAuthChecking(false);
       }
+    });
+
+    return unsubscribe;
+  }, [navigate]);
+
+  async function handleSignup() {
+    seterrormessage(null);
+    setLoading(true);
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      navigate("/home", { replace: true });
+    } catch (error) {
+      seterrormessage("Could not create account. Email may already be in use.");
+    } finally {
+      setLoading(false);
     }
+  }
+
+  if (authChecking) {
+    return null;
   }
 
   return (
@@ -65,21 +49,30 @@ function Signup() {
         type="email"
         placeholder="me@gmail.com"
         className="login-input"
+        value={email}
         onChange={(e) => setemail(e.target.value)}
       />
       <input
         type="password"
         placeholder="password"
         className="login-input"
+        value={password}
         onChange={(e) => setpassword(e.target.value)}
       />
-      
-      <button onClick={handleSignup} className="login-btn">
-        Signup
+      {errormessage && (
+        <p className="inline-error-message">{errormessage}</p>
+      )}
+      <button
+        onClick={handleSignup}
+        className="login-btn"
+        disabled={loading}
+      >
+        {loading ? "Signing up..." : "Signup"}
       </button>
       <p>Already have an account?</p>
-      <Link to="/">Login</Link>
+      <Link to="/login">Login</Link>
     </div>
   );
 }
+
 export default Signup;

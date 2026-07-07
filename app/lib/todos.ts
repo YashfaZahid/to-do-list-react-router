@@ -1,7 +1,7 @@
 const BASE_URL = "https://to-do-api-production-a194.up.railway.app/todos";
 
 export async function getTodos(userId: string) {
-  const res = await fetch(`${BASE_URL}?userId=${userId}`);
+  const res = await fetch("http://localhost:3001/todos");
   return res.json();
 }
 

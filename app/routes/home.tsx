@@ -1,100 +1,144 @@
 import { useEffect, useState } from "react";
-import { getTodos, addTodo, deleteTodo, updateTodo } from "../lib/todos";
-import { auth } from "../lib/firebase";
 import { useNavigate } from "react-router";
-import { redirect,useLoaderData } from "react-router";
-import { onAuthStateChanged } from "firebase/auth";
-import { signOut } from "firebase/auth";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { authFetch } from "../lib/api";
+import { auth } from "../lib/firebase";
 
-
-function getFirebaseUser(): Promise<any>{
-    return new Promise((resolve)=>{
-        const unsubscribe=onAuthStateChanged(auth,(user)=>{
-            unsubscribe();
-            resolve(user);
-        })
-    })
+interface Todo {
+  _id: string;
+  text: string;
+  completed: boolean;
 }
-
-export const clientLoader=async()=> {
-    const user = await getFirebaseUser();
-    if (!user) {
-    // localStorage.removeItem("user_session_id"); 
-    throw redirect("/"); 
-  }
-   
-const res = await getTodos(user.uid);
-  return res; 
-    
-}
-
-clientLoader.hydrate = true;
-// export const loader=async()=>{
-//   const user=auth.currentUser
-//   const data=getTodos(user.uid)
-// }
 
 function Home() {
-  interface Todo {
-    id: number;
-    title: string;
-    completed: boolean;
-    userId: string;
-}
   const navigate = useNavigate();
-  
-  const initialTodos=useLoaderData<typeof clientLoader>() 
-  const [todos, setTodos] = useState<Todo[]>(initialTodos || []);
+
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [input, setInput] = useState("");
+  const [ready, setReady] = useState(false);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        setReady(false);
+        navigate("/login", { replace: true });
+        return;
+      }
 
-async function handleLogout(){
-  await signOut(auth)
-  navigate("/")
-}
+      setReady(true);
+      loadTodos();
+    });
+
+    return unsubscribe;
+  }, [navigate]);
+
+  async function loadTodos() {
+    const res = await authFetch("/todos");
+
+    if (res.status === 401) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    const data = await res.json();
+    setTodos(data);
+  }
+
+  async function handleLogout() {
+    await signOut(auth);
+    navigate("/login", { replace: true });
+  }
 
   async function handleAddTodo() {
     if (!input.trim()) return;
-    const user=auth.currentUser
-    if (!user) return;
-    const newTodo = await addTodo(input, user.uid);
+
+    const res = await authFetch("/todos", {
+      method: "POST",
+      body: JSON.stringify({ text: input }),
+    });
+
+    if (!res.ok) return;
+
+    const newTodo = await res.json();
+
     setTodos([...todos, newTodo]);
     setInput("");
   }
 
-  async function handleDelete(id: number) {
-    await deleteTodo(id);
-    setTodos(todos.filter((todo) => todo.id !== id));
+  async function handleDelete(id: string) {
+    const res = await authFetch(`/todos/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) return;
+
+    setTodos(todos.filter((todo) => todo._id !== id));
   }
 
-  async function handleToggle(todo: any) {
-    const updatedTodo = {...todo,completed:(todo.completed==true?false:true),};
-    await updateTodo(updatedTodo);
-    setTodos(todos.map((t) => (t.id===todo.id?updatedTodo:t)));
+  async function handleToggle(todo: Todo) {
+    const res = await authFetch(`/todos/${todo._id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        text: todo.text,
+        completed: !todo.completed,
+      }),
+    });
+
+    if (!res.ok) return;
+
+    const updated = await res.json();
+
+    setTodos(todos.map((t) => (t._id === updated._id ? updated : t)));
   }
 
+  if (!ready) {
+    return null;
+  }
 
   return (
     <div className="app-container">
       <h1>My Tasks</h1>
+
       <div className="row-container">
-          <input value={input} className="task-input"
-        onChange={(e) => setInput(e.target.value)} placeholder="new task..." />
-          <button onClick={handleAddTodo} className="add-btn">Add</button>
+        <input
+          className="task-input"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="New task..."
+        />
+
+        <button className="add-btn" onClick={handleAddTodo}>
+          Add
+        </button>
       </div>
-      {todos.map((todo) => (
-        <div key={todo.id} className="task-container row-container">
-          <input
-            type="checkbox"
-            checked={todo.completed}
-            onChange={() => handleToggle(todo)}
-          />
-          <div id="task-content">{todo.title}</div>
-          <button onClick={() => handleDelete(todo.id) } className="delete-btn">Delete</button>
-        </div>
-      ))}
-      <button className="login-btn logout-btn" onClick={handleLogout}>LogOut</button>
+
+      <div className="tasks-full-container">
+        {todos.map((todo) => (
+          <div key={todo._id} className="task-container row-container">
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              onChange={() => handleToggle(todo)}
+            />
+
+            <div id="task-content">{todo.text}</div>
+
+            <FontAwesomeIcon
+              icon={faTrash}
+              className="delete-icon"
+              onClick={() => handleDelete(todo._id)}
+            />
+          </div>
+        ))}
+      </div>
+
+      <button className="login-btn logout-btn" onClick={handleLogout}>
+        Logout
+      </button>
     </div>
   );
 }
+
 export default Home;
