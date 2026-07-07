@@ -9,7 +9,7 @@ body{
   overflow-x: hidden;
   font-family: "Press Start 2P", monospace;
   /* background-color: rgb(48, 44, 43); */
-  background-image: url('\assets\rainbow-vortex.svg');
+  background-image: url("/images/bg.jpg");
   background-size: cover;
   margin: 0;
 }
