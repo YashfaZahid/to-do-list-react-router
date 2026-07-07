@@ -8,8 +8,8 @@ body{
   /* overflow: hidden; */
   overflow-x: hidden;
   font-family: "Press Start 2P", monospace;
-  /* background-color: rgb(48, 44, 43); */
-  background-image: url("/images/rainbow-vortex.svg");
+  background-color: rgb(48, 44, 43);
+  /* background-image: url("/images/rainbow-vortex.svg"); */
   background-size: cover;
   margin: 0;
 }
