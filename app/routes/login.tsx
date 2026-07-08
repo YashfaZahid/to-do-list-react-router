@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "~/lib/firebase";
 
+
 function Login() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [email, setemail] = useState<string>("");
   const [password, setpassword] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -15,6 +17,7 @@ function Login() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         navigate("/home", { replace: true });
+        console.log(API_URL)
       } else {
         setAuthChecking(false);
       }

@@ -174,10 +174,15 @@ border-radius: 50px;
 }
 
 @media screen and (max-width: 768px) {
+body{
+  overflow-y: hidden;
+}
   .login-container{
     /* width: 80vw; */
-    min-width: 250px;
-   
+      max-height: 700px;
+      text-align: center;
+
+
     
     
     
@@ -187,7 +192,11 @@ border-radius: 50px;
   }
   .task-container{
     max-height: 40px;
+    padding: 4px;
   }
+.app-container{
+  max-height: 700px;
+}
 
 }
 @media screen and (min-width: 921px) {
