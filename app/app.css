@@ -191,7 +191,7 @@ body{
     width: 100%;
   }
   .task-container{
-    max-height: 40px;
+    /* max-height: 40px; */
     padding: 4px;
   }
 .app-container{
@@ -211,7 +211,7 @@ body{
   }
   .task-container{
     /* max-width: 400px; */
-    max-height: 40px;
+    /* max-height: 40px; */
   }
   .app-container{
     max-width: 700px;
